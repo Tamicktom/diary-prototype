@@ -6,6 +6,7 @@ import { generateText, tool } from "ai";
 export const diaryEntrySchema = z.object({
   id: z.string(),
   date: z.string(),
+  title: z.string(),
   content: z.string(),
   tags: z.array(z.string()),
 });
@@ -40,7 +41,7 @@ class Diary {
         },
         {
             role: "user",
-            content: entry.content,
+            content: `Title: ${entry.title}\nContent: ${entry.content}`,
         },
       ],
       tools: {

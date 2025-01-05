@@ -8,20 +8,24 @@ import { saveDiaryEntry } from "@/actions/save-diary-entry";
 //* Components imports
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 export default async function DiaryPage() {
-	const entries = await getDiaryEntries();
+	const entries = await diary.getEntries();
 
 	async function createDiaryEntry(formData: FormData) {
 		"use server";
+
+		const title = formData.get("title");
 		const content = formData.get("content");
 
-		if (!content) return;
+		if (!content || !title) return;
 
 		const entry: DiaryEntry = {
 			id: crypto.randomUUID(),
 			date: new Date().toISOString(),
 			content: content as string,
+			title: title as string,
 			tags: [],
 		};
 
@@ -31,12 +35,26 @@ export default async function DiaryPage() {
 	}
 
 	return (
-		<div className="flex flex-col w-full justify-start items-center min-h-svh bg-background">
+		<div className="flex flex-row w-full justify-start items-center min-h-svh bg-background">
+			<div className="flex flex-col w-80 border-r border-border min-h-svh p-2">
+				<div className="border p-2 rounded-md">
+					<span>Entries</span>
+					{entries.map((entry) => (
+						<div key={entry.id}>
+							<p>{entry.title}</p>
+						</div>
+					))}
+				</div>
+				<div className="border p-2 rounded-md">
+					<span>Wiki</span>
+				</div>
+			</div>
 			<div className="flex flex-col w-full justify-start items-center max-w-5xl p-8">
 				<form
 					action={createDiaryEntry}
 					className="flex flex-col w-full justify-center items-end gap-2"
 				>
+					<Input type="text" name="title" placeholder="Title" />
 					<Textarea
 						id="content"
 						name="content"
@@ -73,9 +91,4 @@ export default async function DiaryPage() {
 			</div>
 		</div>
 	);
-}
-
-async function getDiaryEntries() {
-	const entries = await diary.getEntries();
-	return entries;
 }
