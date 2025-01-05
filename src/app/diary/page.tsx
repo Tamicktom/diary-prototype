@@ -5,6 +5,10 @@ import { revalidatePath } from "next/cache";
 import { type DiaryEntry, diary } from "@/lib/diary";
 import { saveDiaryEntry } from "@/actions/save-diary-entry";
 
+//* Components imports
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+
 export default async function DiaryPage() {
 	const entries = await getDiaryEntries();
 
@@ -27,14 +31,33 @@ export default async function DiaryPage() {
 	}
 
 	return (
-		<div className="flex flex-col w-full justify-start items-center min-h-svh bg-neutral-800">
-			<div className="flex flex-col w-full justify-start items-center max-w-5xl">
+		<div className="flex flex-col w-full justify-start items-center min-h-svh bg-background">
+			<div className="flex flex-col w-full justify-start items-center max-w-5xl p-8">
+				<form
+					action={createDiaryEntry}
+					className="flex flex-col w-full justify-center items-end gap-2"
+				>
+					<Textarea
+						id="content"
+						name="content"
+						placeholder="Write your diary entry here..."
+						className="text-black w-full"
+					/>
+					<Button type="submit">Save</Button>
+				</form>
+
 				<div className="flex flex-col w-full justify-start items-center">
 					{entries.map((entry) => {
-                        const date = new Date(entry.date);
+						const date = new Date(entry.date);
 						return (
 							<div key={entry.id} className="border p-2 rounded-md">
-								<p>{date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })}</p>
+								<p>
+									{date.toLocaleDateString("pt-BR", {
+										day: "2-digit",
+										month: "2-digit",
+										year: "numeric",
+									})}
+								</p>
 								<p>{entry.content}</p>
 								<span className="flex flex-row justify-start items-center gap-2 border p-2 rounded-md">
 									{entry.tags.map((tag) => (
@@ -47,19 +70,6 @@ export default async function DiaryPage() {
 						);
 					})}
 				</div>
-
-				<form
-					action={createDiaryEntry}
-					className="flex flex-col w-full justify-start items-center"
-				>
-					<textarea
-						id="content"
-						name="content"
-						placeholder="Write your diary entry here..."
-						className="text-black w-full"
-					/>
-					<button type="submit">Save</button>
-				</form>
 			</div>
 		</div>
 	);
