@@ -1,8 +1,9 @@
 //* Libraries imports
 import { revalidatePath } from "next/cache";
-
+import Link from "next/link";
 //* Local imports
 import { type DiaryEntry, diary } from "@/lib/diary";
+import { wiki } from "@/lib/wiki";
 import { saveDiaryEntry } from "@/actions/save-diary-entry";
 
 //* Components imports
@@ -12,6 +13,7 @@ import { Input } from "@/components/ui/input";
 
 export default async function DiaryPage() {
 	const entries = await diary.getEntries();
+	const wikiEntries = await wiki.getEntries();
 
 	async function createDiaryEntry(formData: FormData) {
 		"use server";
@@ -32,6 +34,7 @@ export default async function DiaryPage() {
 		await saveDiaryEntry(entry);
 
 		revalidatePath("/diary");
+		revalidatePath("/wiki");
 	}
 
 	return (
@@ -39,6 +42,7 @@ export default async function DiaryPage() {
 			<div className="flex flex-col w-80 border-r border-border min-h-svh p-2">
 				<div className="border p-2 rounded-md">
 					<span>Entries</span>
+					{entries.length === 0 && <span>No entries yet</span>}
 					{entries.map((entry) => (
 						<div key={entry.id}>
 							<p>{entry.title}</p>
@@ -47,6 +51,14 @@ export default async function DiaryPage() {
 				</div>
 				<div className="border p-2 rounded-md">
 					<span>Wiki</span>
+					{wikiEntries.entries.length === 0 && <span>No wiki entries yet</span>}
+					{wikiEntries.entries.map((entry) => (
+						<div key={entry.id}>
+							<Link href={`/wiki/${entry.id}`}>
+								<p>{entry.title}</p>
+							</Link>
+						</div>
+					))}
 				</div>
 			</div>
 			<div className="flex flex-col w-full justify-start items-center max-w-5xl p-8">
