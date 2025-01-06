@@ -31,6 +31,7 @@ Check if the wiki entrie for that topic already exists.
 If it does, read it and update it with the new information, if it doesn't, create a new one.
 You can create multiple wiki entries.
 The wiki entries should be in the same language as the diary entry.
+When writing the wiki entries, use the same tone and style as the diary entry. (first person if the diary entry is in first person, third person if the diary entry is in third person)
 
 Rules for what should become a wiki entry:
 
@@ -55,7 +56,7 @@ class Diary {
 
     //* Generate tags
     await generateText({
-      model: openai("gpt-4o"),
+      model: openai("gpt-4o-mini"),
       maxSteps: 1,
       messages: [
         {
@@ -84,7 +85,7 @@ class Diary {
 
     //* Generate wiki entries
     await generateText({
-      model: openai("gpt-4o"),
+      model: openai("gpt-4o-mini"),
       maxSteps: 20,
       messages: [
         {
